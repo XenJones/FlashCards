@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace flashCards.Controllers;
+namespace flashCards.Services;
 
-public class UserService : Controller
+public class UserService
 {
 
     private readonly AppDbContext _context;
@@ -18,12 +18,7 @@ public class UserService : Controller
         _passwordHasher = new PasswordHasher<User>();
     }
 
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    public async Task<User> Register(string email, string password, string firstName, string lastName,
+    public async Task<User> RegisterUser(string email, string password, string firstName, string lastName,
         string phoneNumber)
     {
         if (await _context.User.AnyAsync(u => u.Email == email))
@@ -37,14 +32,15 @@ public class UserService : Controller
             FirstName = firstName,
             LastName = lastName,
             Phone = phoneNumber,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         };
-        
+
         user.PasswordHash = _passwordHasher.HashPassword(user, password);
         _context.Add(user);
         await _context.SaveChangesAsync();
         
         return user;
-        
 
     }
 
@@ -58,7 +54,8 @@ public class UserService : Controller
         
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
         
-        return result == PasswordVerificationResult.Success;
+        return result == PasswordVerificationResult.Success ? user :
+                throw new Exception($"Password is invalid");
     }
     
 }
