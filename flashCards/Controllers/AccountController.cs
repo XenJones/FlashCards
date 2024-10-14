@@ -2,6 +2,7 @@ using System.Security.Claims;
 using flashCards.Models;
 using flashCards.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace flashCards.Controllers;
@@ -24,7 +25,7 @@ public class AccountController : Controller
     {
         try
         {
-            var user = await _userService.RegisterUser(model.Email, model.PasswordHash, model.FirstName, model.LastName,
+            var user = await _userService.RegisterUser(model.UserName, model.Email, model.PasswordHash, model.FirstName, model.LastName,
                 model.Phone);
             return RedirectToAction("Login");
         }
@@ -62,5 +63,13 @@ public class AccountController : Controller
     {
         await HttpContext.SignOutAsync("CookieAuth");
         return RedirectToAction("Login");  
+    }
+
+    [Authorize]
+    public IActionResult Index()
+    {
+        string email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var user = _userService.GetUserByEmail(email);
+        return View(user);
     }
 }

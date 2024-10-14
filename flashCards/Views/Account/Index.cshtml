@@ -1,18 +1,11 @@
-@model TModel
+@model User
 
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
 <div>
-      
+    <p>@Model.UserName</p>
+    <p>@Model.FirstName</p>
+    <p>@Model.LastName</p>
+    <p>@Model.Email</p>
+    <p>@Model.Phone</p>
+    <p>@Model.CreatedAt</p>
+    <p>@Model.UpdatedAt</p>
 </div>
-</body>
-</html>

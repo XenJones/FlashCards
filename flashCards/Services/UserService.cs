@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using flashCards.Migrations;
 using flashCards.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class UserService
         _passwordHasher = new PasswordHasher<User>();
     }
 
-    public async Task<User> RegisterUser(string email, string password, string firstName, string lastName,
+    public async Task<User> RegisterUser(string username, string email, string password, string firstName, string lastName,
         string phoneNumber)
     {
         if (await _context.User.AnyAsync(u => u.Email == email))
@@ -28,6 +29,7 @@ public class UserService
 
         var user = new User
         {
+            UserName = username,
             Email = email,
             FirstName = firstName,
             LastName = lastName,
@@ -57,5 +59,9 @@ public class UserService
         return result == PasswordVerificationResult.Success ? user :
                 throw new Exception($"Password is invalid");
     }
-    
+
+    public User GetUserByEmail(string email)
+    {
+        return _context.User.SingleOrDefault(u => u.Email == email);
+    }
 }
