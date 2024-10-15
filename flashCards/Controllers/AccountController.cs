@@ -82,4 +82,19 @@ public class AccountController : Controller
         return RedirectToAction("Index");
     }
     
+    [HttpPost]
+    public IActionResult Delete()
+    {
+        string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (userEmail == null)
+        {
+            return RedirectToAction("Login");
+        }
+        
+        _userService.DeleteUser(userEmail);
+        
+        return RedirectToAction("Logout");
+    }
+    
 }

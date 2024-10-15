@@ -78,4 +78,11 @@ public class UserService
         _context.Update(existingUser);
         _context.SaveChanges();
     }
+
+    public void DeleteUser(string email)
+    {
+        var user = _context.User.SingleOrDefault(u => u.Email == email);
+        _context.User.Remove(user);
+        _context.SaveChanges();
+    }
 }
