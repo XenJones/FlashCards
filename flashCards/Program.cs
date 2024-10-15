@@ -8,7 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Configure Entity Framework Core to use SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=ecommerce.db"));
+    options.UseSqlite("Data Source=flashcards.db"));
 
 var app = builder.Build();
 
@@ -31,4 +31,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-

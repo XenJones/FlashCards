@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace flashCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241015112009_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241015145006_Update database3")]
+    partial class Updatedatabase3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.32");
 
-            modelBuilder.Entity("Flashcard", b =>
+            modelBuilder.Entity("flashCards.Models.Flashcard", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace flashCards.Migrations
                     b.ToTable("Flashcards");
                 });
 
-            modelBuilder.Entity("flashCards.Models.FlashCardPack", b =>
+            modelBuilder.Entity("flashCards.Models.FlashcardPack", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,9 +64,9 @@ namespace flashCards.Migrations
                     b.ToTable("FlashcardPacks");
                 });
 
-            modelBuilder.Entity("Flashcard", b =>
+            modelBuilder.Entity("flashCards.Models.Flashcard", b =>
                 {
-                    b.HasOne("flashCards.Models.FlashCardPack", "FlashcardPack")
+                    b.HasOne("flashCards.Models.FlashcardPack", "FlashcardPack")
                         .WithMany("Flashcards")
                         .HasForeignKey("FlashcardPackId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -75,7 +75,7 @@ namespace flashCards.Migrations
                     b.Navigation("FlashcardPack");
                 });
 
-            modelBuilder.Entity("flashCards.Models.FlashCardPack", b =>
+            modelBuilder.Entity("flashCards.Models.FlashcardPack", b =>
                 {
                     b.Navigation("Flashcards");
                 });

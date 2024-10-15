@@ -1,0 +1,23 @@
+﻿<p>Test</p>
+<h2>@Model.PackName</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Answer</th>
+            <th>SubQuestion</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var flashcard in Model.Flashcards)
+        {
+            <tr>
+                <td>@flashcard.Question</td>
+                <td>@flashcard.Answer</td>
+                <td>@flashcard.SubQuestion</td>
+            </tr>
+        }
+    </tbody>
+</table>
