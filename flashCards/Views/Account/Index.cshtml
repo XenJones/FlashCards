@@ -1,11 +1,26 @@
 @model User
 
-<div>
-    <p>@Model.UserName</p>
-    <p>@Model.FirstName</p>
-    <p>@Model.LastName</p>
-    <p>@Model.Email</p>
-    <p>@Model.Phone</p>
-    <p>@Model.CreatedAt</p>
-    <p>@Model.UpdatedAt</p>
-</div>
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label asp-for="UserName">Username</label>
+        <input class="form-control" type="text" id="UserName" asp-for="UserName"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="FirstName">First Name</label>
+        <input class="form-control" type="text" id="FirstName" asp-for="FirstName"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Last Name</label>
+        <input class="form-control" type="text" id="LastName" asp-for="LastName"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Email</label>
+        <input class="form-control" type="email" id="Email" asp-for="Email"/>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone">Phone</label>
+        <input class="form-control" type="text" id="Phone" asp-for="Phone"/>
+    </div>
+    <button type="submit">Save Changes</button>
+
+</form>

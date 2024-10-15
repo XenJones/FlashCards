@@ -64,4 +64,18 @@ public class UserService
     {
         return _context.User.SingleOrDefault(u => u.Email == email);
     }
+
+    public void UpdateUser(User user)
+    {
+        var existingUser = _context.User.SingleOrDefault(u => u.Email == user.Email);
+
+        existingUser.FirstName = user.FirstName;
+        existingUser.LastName = user.LastName;
+        existingUser.Phone = user.Phone;
+        existingUser.UpdatedAt = DateTime.Now;
+        existingUser.Email = user.Email;
+        
+        _context.Update(existingUser);
+        _context.SaveChanges();
+    }
 }

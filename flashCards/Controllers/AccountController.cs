@@ -68,8 +68,18 @@ public class AccountController : Controller
     [Authorize]
     public IActionResult Index()
     {
-        string email = User.FindFirst(ClaimTypes.Email)?.Value;
-        var user = _userService.GetUserByEmail(email);
-        return View(user);
+            string email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _userService.GetUserByEmail(email);
+            return View(user);
     }
+
+    [HttpPost]
+    public IActionResult Edit(User model)
+    {
+        
+        _userService.UpdateUser(model);
+        
+        return RedirectToAction("Index");
+    }
+    
 }
