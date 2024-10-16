@@ -1,0 +1,71 @@
+﻿@model FlashcardPack
+<h2>@ViewData["Title"]</h2>
+<form asp-action="@ViewData["Action"]" method="post">
+    <input type="hidden" asp-for="Id" />
+    <!-- Section for the pack of flashcards-->
+    <div class="form-group">
+        <label asp-for="PackName">Pack Name</label>
+        <input asp-for="PackName" class="form-control" />
+        <span asp-validation-for="PackName" class="text-danger"></span>
+    </div>
+    <hr />
+
+    <!-- Section for individual cards -->
+    <h3>Flashcards</h3>
+    <div id="flashcards-container">
+        <!-- Single flashcard template -->
+        <div class="flashcard-template">
+            <div class="form-group">
+                <label>Image URL</label>
+                <input name="Flashcards[0].ImageURL" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Question</label>
+                <input name="Flashcards[0].Question" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Sub Question</label>
+                <input name="Flashcards[0].SubQuestion" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Answer</label>
+                <input name="Flashcards[0].Answer" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary" id="add-flashcard-btn">Add Flashcard</button>
+    <hr />
+    <button type="submit" class="btn btn-primary">@ViewData["ButtonText"]</button>
+</form>
+
+@section Scripts {
+    <script>
+        // JavaScript for adding more flashcards dynamically
+        let flashcardIndex = 1;
+        document.getElementById("add-flashcard-btn").addEventListener("click", function () {
+            const container = document.getElementById("flashcards-container");
+            const newFlashcard = `
+                        <div class="flashcard-template">
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input name="Flashcards[${flashcardIndex}].ImageURL" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Question</label>
+                                <input name="Flashcards[${flashcardIndex}].Question" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Sub Question</label>
+                                <input name="Flashcards[${flashcardIndex}].SubQuestion" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label>Answer</label>
+                                <input name="Flashcards[${flashcardIndex}].Answer" class="form-control" />
+                            </div>
+                        </div>
+                    `;
+            container.insertAdjacentHTML("beforeend", newFlashcard);
+            flashcardIndex++;
+        });
+    </script>
+}

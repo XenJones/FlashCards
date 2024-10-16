@@ -11,8 +11,8 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<FlashcardPack>()
-            .HasMany(f => f.Flashcards)
-            .WithOne(p => p.FlashcardPack)
-            .HasForeignKey(p => p.FlashcardPackId);
+            .HasMany(fp => fp.Flashcards)
+            .WithOne(f => f.FlashcardPack)
+            .HasForeignKey(f => f.FlashcardPackId);
     }
 }
