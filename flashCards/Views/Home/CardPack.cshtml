@@ -1,0 +1,279 @@
+﻿<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                <a class="btn btn-outline-secondary me-2" href="javascript:history.back();">Back</a>
+            </div>
+            <div class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <a class="btn btn-outline-primary me-2" id="slideshowBtn" href="#">Slideshow</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>@Model.PackName</h1>
+    <div class="row">
+        @foreach (var card in Model.Flashcards)
+
+        {
+            <div class="col-sm-6 col-md-4 mb-4">
+                <div class="card-container">
+                    <div class="card shadow-sm" style="background-image: url('@card.ImageURL');">
+                        <div class="card-front">
+                            <div class="card-body">
+                                <h5 id="question" class="card-title">@card.Question</h5>
+                                <p id="subquestion" class="card-text">@card.SubQuestion</p>
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-body">
+                                <h5 class="card-title">Answer:</h5>
+                                <p class="card-text">@card.Answer</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-buttons">
+                        <form style="display:inline;" method="post" asp-action="EditFlashCard" asp-route-id="@card.Id">
+                            <button class="btn btn-primary">Edit</button>
+                        </form>
+                        <form id="deletePackForm@(card.Id)" style="display:inline;" method="post" asp-action="DeleteCard" asp-route-id="@card.Id">
+                            <button class="btn btn-danger"
+                                    onclick="confirmDelete('Are you sure you want to delete the card \'@card.Question\'? This action cannot be undone!', 'deletePackForm@(card.Id)'); return false;">
+                                Delete
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                        <button class="btn btn-secondary flip-btn">Flip</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="slideshow-controls">
+    <button class="prev">&laquo; Previous</button>
+    <button class="next">Next &raquo;</button>
+</div>
+
+<script>
+    function confirmDelete(text, formId) {
+        if (confirm(text)) {
+            document.getElementById(formId).submit();
+        }
+    }
+
+    document.getElementById('slideshowBtn').addEventListener('click', function () {
+        document.querySelector('.container').classList.toggle('slideshow-mode');
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const flipButtons = document.querySelectorAll('.flip-btn');
+        flipButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const card = this.closest('.card-container').querySelector('.card');
+                const question = card.querySelector("#question");
+                const subquestion = card.querySelector("#subquestion");
+                const answer = card.querySelector(".card-back");
+
+                if (card.classList.contains('flipped')) {
+                    answer.style.display = 'none';
+                    setTimeout(function () {
+                        question.style.display = 'block';
+                        subquestion.style.display = 'block';
+                    }, 300);
+                    card.classList.toggle('flipped');
+                } else {
+                    question.style.display = 'none';
+                    subquestion.style.display = 'none';
+                    card.classList.toggle('flipped');
+                    answer.style.display = 'block';
+                }
+            });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.slideshow-mode .col-sm-6');
+        let currentIndex = 0;
+
+        document.querySelector('.next').addEventListener('click', function () {
+            cards[currentIndex].style.display = 'none';
+            currentIndex = (currentIndex + 1) % cards.length;
+            cards[currentIndex].style.display = 'block';
+        });
+
+        document.querySelector('.prev').addEventListener('click', function () {
+            cards[currentIndex].style.display = 'none';
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            cards[currentIndex].style.display = 'block';
+        });
+
+        cards.forEach((card, index) => {
+            if (index !== 0) card.style.display = 'none';
+        });
+    });
+</script>
+
+<style>
+    .card-container {
+        perspective: 1000px;
+        width: 100%;
+        height: 300px;
+        position: relative;
+    }
+
+    .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-front {
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .card-back {
+        transform: rotateY(180deg);
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    }
+
+    .card-body {
+        text-align: center;
+        padding: 20px;
+        position: relative;
+        z-index: 2;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-buttons {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        margin-top: auto;
+    }
+
+    .btn-primary, .btn-danger, .btn-secondary {
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .slideshow-mode {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000;
+    }
+
+        .slideshow-mode .row {
+            flex-wrap: nowrap;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .slideshow-mode .col-sm-6,
+        .slideshow-mode .col-md-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+            height: 100%;
+        }
+
+        .slideshow-mode .card-container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .slideshow-mode .card {
+            height: 100%;
+        }
+
+        .slideshow-mode .card-body {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .slideshow-mode .card-buttons {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+    .slideshow-controls {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        pointer-events: none;
+    }
+
+        .slideshow-controls button {
+            pointer-events: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .slideshow-controls .prev,
+        .slideshow-controls .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .slideshow-controls .prev {
+            left: 10px;
+        }
+
+        .slideshow-controls .next {
+            right: 10px;
+        }
+</style>
