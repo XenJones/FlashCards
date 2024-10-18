@@ -7,6 +7,7 @@ public class AppDbContext : DbContext
 
     public DbSet<FlashcardPack> FlashcardPacks { get; set; }
     public DbSet<Flashcard> Flashcards { get; set; }
+    public DbSet<User> User { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
