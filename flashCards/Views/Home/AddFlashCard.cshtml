@@ -10,6 +10,72 @@
     </div>
     <hr />
 
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4" style="padding-bottom: 40px;">
+                <div class="card" style="width: 100%;">
+                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
+                    <div class="card-body">
+                        <label>Image URL</label>
+                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
+                        <hr />
+                        <label>Question</label>
+                        <input name="Flashcards[0].Question" class="form-control" />
+                        <label>Sub Question</label>
+                        <input name="Flashcards[0].SubQuestion" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
+                    <div class="card-body">
+                        <label>Image URL</label>
+                        <input name="Flashcards[1].ImageURL" class="form-control" onchange="updateImage(0)" />
+                        <hr />
+                        <label>Question</label>
+                        <input name="Flashcards[1].Question" class="form-control" />
+                        <label>Sub Question</label>
+                        <input name="Flashcards[1].SubQuestion" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
+                    <div class="card-body">
+                        <label>Image URL</label>
+                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
+                        <hr />
+                        <label>Question</label>
+                        <input name="Flashcards[2].Question" class="form-control" />
+                        <label>Sub Question</label>
+                        <input name="Flashcards[2].SubQuestion" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card" style="width: 100%;">
+                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
+                    <div class="card-body">
+                        <label>Image URL</label>
+                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
+                        <hr />
+                        <label>Question</label>
+                        <input name="Flashcards[2].Question" class="form-control" />
+                        <label>Sub Question</label>
+                        <input name="Flashcards[2].SubQuestion" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- Section for individual cards -->
     <h3>Flashcards</h3>
     <div id="flashcards-container">
@@ -40,6 +106,13 @@
 
 @section Scripts {
     <script>
+        //for updating flash card image dynamically
+        function updateImage(index) {
+            const imageUrl = document.querySelector(`input[name='Flashcards[${index}].ImageURL']`).value;
+            const imgElement = document.getElementById(`flashcardImg${index}`);
+            imgElement.src = imageUrl;
+        }
+
         // JavaScript for adding more flashcards dynamically
         let flashcardIndex = 1;
         document.getElementById("add-flashcard-btn").addEventListener("click", function () {

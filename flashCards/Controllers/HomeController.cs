@@ -39,6 +39,15 @@ public class HomeController : Controller
         return View("AddFlashCard", new FlashcardPack());
     }
 
+    public IActionResult EditFlashCard()
+    {
+        ViewData["Title"] = "Edit Flash Card";
+        ViewData["Action"] = "EditPack";
+        ViewData["ButtonText"] = "Save Changes";
+
+        return View("AddFlashCard", new FlashcardPack());
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddPack(FlashcardPack flashcardPack)
