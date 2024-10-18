@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace flashCards.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241015145006_Update database3")]
-    partial class Updatedatabase3
+    [Migration("20241018095907_Database Update")]
+    partial class DatabaseUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.32");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.27");
 
             modelBuilder.Entity("flashCards.Models.Flashcard", b =>
                 {

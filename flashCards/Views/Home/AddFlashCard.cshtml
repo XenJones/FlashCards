@@ -2,103 +2,54 @@
 <h2>@ViewData["Title"]</h2>
 <form asp-action="@ViewData["Action"]" method="post">
     <input type="hidden" asp-for="Id" />
-    <!-- Section for the pack of flashcards-->
-    <div class="form-group">
-        <label asp-for="PackName">Pack Name</label>
-        <input asp-for="PackName" class="form-control" />
-        <span asp-validation-for="PackName" class="text-danger"></span>
+
+    <!-- Pack Name Section -->
+    <div class="form-group mb-3">
+        <label asp-for="PackName" class="form-label">Pack Name</label>
+        <input asp-for="PackName" class="form-control" required />
+        <div class="invalid-feedback">Pack name is required</div>
     </div>
+
     <hr />
 
+    <h3>Flash Cards</h3>
     <div class="container">
-        <div class="row">
-            <div class="col-md-4" style="padding-bottom: 40px;">
-                <div class="card" style="width: 100%;">
-                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
+        <div class="row" id="flashcards-container">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img style="max-height: 200px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="Flashcard Image for Question 1">
                     <div class="card-body">
-                        <label>Image URL</label>
-                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
+                        <div class="form-group mb-3">
+                            <label>Image URL</label>
+                            <input name="Flashcards[0].ImageURL" class="form-control" required onchange="updateImage(0)" />
+                            <div class="invalid-feedback">Image URL is required</div>
+                        </div>
                         <hr />
-                        <label>Question</label>
-                        <input name="Flashcards[0].Question" class="form-control" />
-                        <label>Sub Question</label>
-                        <input name="Flashcards[0].SubQuestion" class="form-control" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card" style="width: 100%;">
-                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
-                    <div class="card-body">
-                        <label>Image URL</label>
-                        <input name="Flashcards[1].ImageURL" class="form-control" onchange="updateImage(0)" />
-                        <hr />
-                        <label>Question</label>
-                        <input name="Flashcards[1].Question" class="form-control" />
-                        <label>Sub Question</label>
-                        <input name="Flashcards[1].SubQuestion" class="form-control" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card" style="width: 100%;">
-                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
-                    <div class="card-body">
-                        <label>Image URL</label>
-                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
-                        <hr />
-                        <label>Question</label>
-                        <input name="Flashcards[2].Question" class="form-control" />
-                        <label>Sub Question</label>
-                        <input name="Flashcards[2].SubQuestion" class="form-control" />
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card" style="width: 100%;">
-                    <img style="max-height: 150px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="No Image Inputted">
-                    <div class="card-body">
-                        <label>Image URL</label>
-                        <input name="Flashcards[0].ImageURL" class="form-control" onchange="updateImage(0)" />
-                        <hr />
-                        <label>Question</label>
-                        <input name="Flashcards[2].Question" class="form-control" />
-                        <label>Sub Question</label>
-                        <input name="Flashcards[2].SubQuestion" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label>Question</label>
+                            <input name="Flashcards[0].Question" class="form-control" required />
+                            <div class="invalid-feedback">Question is required</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Sub Question</label>
+                            <input name="Flashcards[0].SubQuestion" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label>Answer</label>  
+                            <input name="FLashcards[0].Answer" class="form-control" />
+                        </div>
+                        <button style="margin-top: 20px;" type="button" class="btn btn-danger btn-sm" onclick="deleteFlashcard(this)">Delete</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- Section for individual cards -->
-    <h3>Flashcards</h3>
-    <div id="flashcards-container">
-        <!-- Single flashcard template -->
-        <div class="flashcard-template">
-            <div class="form-group">
-                <label>Image URL</label>
-                <input name="Flashcards[0].ImageURL" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label>Question</label>
-                <input name="Flashcards[0].Question" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label>Sub Question</label>
-                <input name="Flashcards[0].SubQuestion" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label>Answer</label>
-                <input name="Flashcards[0].Answer" class="form-control" />
-            </div>
-        </div>
+    <div class="mb-3">
+        <label for="flashcard-count" class="form-label">Number of Flashcards to Add</label>
+        <input type="number" id="flashcard-count" class="form-control" value="1" min="1" max="500" />
     </div>
+
     <button type="button" class="btn btn-secondary" id="add-flashcard-btn">Add Flashcard</button>
     <hr />
     <button type="submit" class="btn btn-primary">@ViewData["ButtonText"]</button>
@@ -106,39 +57,80 @@
 
 @section Scripts {
     <script>
-        //for updating flash card image dynamically
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('form');
+
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('input', function (event) {
+                    if (event.target.checkValidity()) {
+                        event.target.classList.remove('is-invalid');
+                        event.target.classList.add('is-valid');
+                    } else {
+                        event.target.classList.remove('is-valid');
+                        event.target.classList.add('is-invalid');
+                    }
+                }, false);
+            });
+        })();
+
+        // Updates a flashcard image as it's inputted 
         function updateImage(index) {
             const imageUrl = document.querySelector(`input[name='Flashcards[${index}].ImageURL']`).value;
             const imgElement = document.getElementById(`flashcardImg${index}`);
             imgElement.src = imageUrl;
         }
 
-        // JavaScript for adding more flashcards dynamically
-        let flashcardIndex = 1;
+        //Removes a flashcard
+        function deleteFlashcard(button) {
+            const card = button.closest('.col-md-4');
+            card.remove();
+        }
+
+        // Adds mulitple empty flashcards at the same time.
+        let flashcardIndex = 1;  //start this from 1 since the first flashcard is already index 0
         document.getElementById("add-flashcard-btn").addEventListener("click", function () {
             const container = document.getElementById("flashcards-container");
-            const newFlashcard = `
-                        <div class="flashcard-template">
-                            <div class="form-group">
-                                <label>Image URL</label>
-                                <input name="Flashcards[${flashcardIndex}].ImageURL" class="form-control" />
+            const count = parseInt(document.getElementById("flashcard-count").value) || 1;
+
+            const currentFlashcardCount = container.querySelectorAll('.col-md-4').length;
+
+            //Check if the inputted number exceeds threshold of flashcards that can be created, in this case 500 should be the limit ideally
+            if (currentFlashcardCount + count > 501) {
+                alert('You cannot add more than 500 flashcards.'); 
+                return; 
+            }
+
+            for (let i = 0; i < count; i++) {
+                const newFlashcard = `
+                            <div class="col-md-4 mb-4">
+                                <div class="card shadow-sm">
+                                    <img style="max-height: 200px; object-fit:contain;" class="card-img-top" id="flashcardImg${flashcardIndex}" src="..." alt="Flashcard Image for Question ${flashcardIndex + 1}">
+                                    <div class="card-body">
+                                        <div class="form-group mb-3">
+                                            <label>Image URL</label>
+                                            <input name="Flashcards[${flashcardIndex}].ImageURL" class="form-control" required onchange="updateImage(${flashcardIndex})" />
+                                            <div class="invalid-feedback">Image URL is required</div>
+                                        </div>
+                                        <hr />
+                                        <div class="form-group mb-3">
+                                            <label>Question</label>
+                                            <input name="Flashcards[${flashcardIndex}].Question" class="form-control" required />
+                                            <div class="invalid-feedback">Question is required</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Sub Question</label>
+                                            <input name="Flashcards[${flashcardIndex}].SubQuestion" class="form-control" />
+                                        </div>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteFlashcard(this)">Delete</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Question</label>
-                                <input name="Flashcards[${flashcardIndex}].Question" class="form-control" />
-                            </div>
-                            <div class="form-group">
-                                <label>Sub Question</label>
-                                <input name="Flashcards[${flashcardIndex}].SubQuestion" class="form-control" />
-                            </div>
-                            <div class="form-group">
-                                <label>Answer</label>
-                                <input name="Flashcards[${flashcardIndex}].Answer" class="form-control" />
-                            </div>
-                        </div>
-                    `;
-            container.insertAdjacentHTML("beforeend", newFlashcard);
-            flashcardIndex++;
+                        `;
+
+                container.insertAdjacentHTML("beforeend", newFlashcard);
+                flashcardIndex++;
+            }
         });
     </script>
 }
