@@ -1,4 +1,4 @@
-﻿using flashCards.Models;
+using flashCards.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
