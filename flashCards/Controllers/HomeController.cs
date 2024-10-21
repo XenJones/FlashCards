@@ -113,19 +113,29 @@ public class HomeController : Controller
 
                 _logger.LogInformation($"Saving FlashcardPack to database...");
                 // Save changes to get the FlashcardPack Id
-                var saveResult = await _context.SaveChangesAsync();
-                _logger.LogInformation($"SaveChanges result: {saveResult}");
 
-                // Log the number of flashcards
-                _logger.LogInformation($"Number of flashcards: {flashcardPack.Flashcards.Count}");
+                if (_context.FlashcardPacks.Where(x => x.PackName == flashcardPack.PackName).Any())
+                {
+                    TempData["Error"] = "Flashcard pack already exists";
+                }
+                else
+                {
 
-                // Redirect to the FlashCard view or another view after successful saving
-                return RedirectToAction("FlashCard");
+                    var saveResult = await _context.SaveChangesAsync();
+                    _logger.LogInformation($"SaveChanges result: {saveResult}");
+
+                    // Log the number of flashcards
+                    _logger.LogInformation($"Number of flashcards: {flashcardPack.Flashcards.Count}");
+
+                    // Redirect to the FlashCard view or another view after successful saving
+                    return RedirectToAction("FlashCard");
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while saving FlashcardPack");
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, contact your system administrator.");
+                ModelState.AddModelError("",
+                    "Unable to save changes. Try again, and if the problem persists, contact your system administrator.");
             }
         }
 
