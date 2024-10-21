@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace flashCards.Models
 {
+    [Index(nameof(PackName), IsUnique = true)]
+
     public class FlashcardPack
     {
         public int Id { get; set; }
