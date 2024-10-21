@@ -1,30 +1,76 @@
-﻿<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Quizzy Cards</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="@Url.Action("AddFlashCard", "Home")">Create Cards</a></li>
-                        <li><a class="dropdown-item" href="@Url.Action("EditFlashCard", "Home")">Edit Cards</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">View Cards</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Secret Button</a></li>
-                    </ul>
-                </li>
-            </ul>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                <a class="btn btn-outline-primary me-2" href="@Url.Action("AddFlashCard", "Home")">Create Flash Cards</a>
+                <a class="btn btn-outline-primary me-2" href="@Url.Action("EditFlashCard", "Home")">Edit </a> <!-- this needs to be removed later, it's just for reference for now-->
+                <a class="btn btn-outline-danger me-2" href="#" onclick="confirmDelete('Are you sure you want to delete all packs? This action cannot be undone!')">Delete All Packs</a>
+            </div>
             <form class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button type="button" class="btn btn-outline-primary">Search</button>
             </form>
+
+            <form id="delete-all-packs-form" method="post" asp-action="DeleteAllPacks" style="display:none;">
+                @Html.AntiForgeryToken()
+            </form>
         </div>
     </div>
 </nav>
+
+<div style="display: flex; flex-direction: row; flex-wrap: wrap;" class="row">
+    @foreach (var pack in Model)
+
+
+
+    {
+        <div class="col-sm-6 col-md-4 mb-4 d-flex">
+            <div class="card shadow-sm" style="width: 100%; position: relative; height: 200px;">
+                <div class="card-body" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
+                    <div style="text-align: center;" class="form-group mb-3">
+                        <h2><b>@pack.PackName</b></h2>
+                        <form style="display:inline;" method="post" asp-action="deletePack" asp-route-id="@pack.Id" id="deletePackForm@pack.Id">
+                            <button title="Permanently Remove Product"
+                                    style="margin-top:7.5px; margin-left:7.5px; background-color: red; color: white;"
+                                    class="btn btn-sm"
+                                    onclick="confirmDelete('Are you sure you want to delete the pack \'@pack.PackName\'? This action cannot be undone!', 'deletePackForm@(pack.Id)'); return false;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                        <form style="display:inline;" method="post" asp-action="EditFlashCard" asp-route-id="@pack.Id">
+                            <button title="Edit the pack and all its cards"
+                                    style="margin-top:7.5px; margin-left:7.5px; background-color: blue; color: white;"
+                                    class="btn btn-sm"
+                                    onclick="EditFlashCard(@pack.Id)"
+                                    data-id="@pack.Id">
+                                <i class="fas fa-pencil"></i> Edit
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                        <form style="display:inline;" method="post" asp-action="ViewPack" asp-route-id="@pack.Id">
+                            <button title="Open the pack"
+                                    style="margin-top:7.5px; margin-left:7.5px; background-color: white; color: blue;"
+                                    class="btn btn-outline-primary"
+                                    onclick="ViewPack(@pack.Id)"
+                                    data-id="@pack.Id">
+                                Open Pack
+                            </button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function confirmDelete(text, formId) {
+            if (confirm(text)) {
+                document.getElementById(formId).submit();
+            }
+        }
+</script>
