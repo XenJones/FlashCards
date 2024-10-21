@@ -8,6 +8,7 @@
         <label asp-for="PackName" class="form-label">Pack Name</label>
         <input asp-for="PackName" class="form-control" required />
         <div class="invalid-feedback">Pack name is required</div>
+        <div class="text-danger">@TempData["Error"]</div>
     </div>
 
     <hr />
