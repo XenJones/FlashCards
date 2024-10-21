@@ -217,6 +217,7 @@
         var body = document.body;
         var footer = document.querySelector('footer');
         var searchButton = document.getElementById('searchButton');
+        var openPackButtons = document.querySelectorAll('.open-pack-button');
         var navbar = document.getElementById('navbar');
         var navbarNav = document.getElementById('navbarNav');
 
@@ -228,6 +229,11 @@
                 footer.classList.remove('light-mode');
                 searchButton.classList.remove('btn-light');
                 searchButton.classList.add('btn-dark');
+
+                openPackButtons.forEach(button => {
+                    button.classList.remove('btn-light');
+                    button.classList.add('btn-dark');
+                });
 
                 // Update Navbar for Dark Mode
                 navbar.classList.remove('bg-light', 'border-light');
@@ -248,6 +254,11 @@
                 searchButton.classList.remove('btn-dark');
                 searchButton.classList.add('btn-light');
 
+                openPackButtons.forEach(button => {
+                    button.classList.remove('btn-dark');
+                    button.classList.add('btn-light');
+                });
+
                 // Update Navbar for Light Mode
                 navbar.classList.remove('bg-dark', 'border-dark');
                 navbar.classList.add('bg-light', 'border-light');
@@ -261,6 +272,7 @@
                 switchText.style.color = 'black';
             }
         });
+
     </script>
 </body>
 </html>
