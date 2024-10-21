@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/flashCards.styles.css" asp-append-version="true" />
     <style>
+        .no-transition * {
+            transition: none !important;
+        }
         body {
             transition: background-color 3.9s ease, color 3.9s ease;
         }
@@ -140,17 +143,16 @@
             user-select: none;
         }
 
-        /* Navbar Brand Color Changes */
         .navbar-brand {
-            transition: color 3.9s ease; /* Smooth transition for title color */
+            transition: color 3.9s ease; 
         }
 
         body.light-mode .navbar-brand {
-            color: black; /* Light mode title color */
+            color: black;
         }
 
         body.dark-mode .navbar-brand {
-            color: white; /* Dark mode title color */
+            color: white; 
         }
     </style>
 </head>
@@ -220,59 +222,92 @@
         var openPackButtons = document.querySelectorAll('.open-pack-button');
         var navbar = document.getElementById('navbar');
         var navbarNav = document.getElementById('navbarNav');
+        var toggleSwitch = document.getElementById('flexSwitchCheckDefault');
 
-        document.getElementById('flexSwitchCheckDefault').addEventListener('change', function () {
+        var mode = localStorage.getItem("mode");
+
+        // Initially disable transitions
+        body.classList.add('no-transition');
+        footer.classList.add('no-transition');
+
+        function applyDarkMode() {
+            switchText.textContent = 'Dark';
+            body.classList.remove('light-mode');
+            footer.classList.remove('light-mode');
+            searchButton.classList.remove('btn-light');
+            searchButton.classList.add('btn-dark');
+
+            openPackButtons.forEach(button => {
+                button.classList.remove('btn-light');
+                button.classList.add('btn-dark');
+            });
+
+            navbar.classList.remove('bg-light', 'border-light');
+            navbar.classList.add('bg-dark', 'border-dark');
+            navbarNav.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-dark');
+                link.classList.add('text-light');
+            });
+
+            body.classList.add('dark-mode');
+            footer.classList.add('dark-mode');
+            switchText.style.color = 'white';
+        }
+
+        function applyLightMode() {
+            switchText.textContent = 'Light';
+            body.classList.remove('dark-mode');
+            footer.classList.remove('dark-mode');
+            searchButton.classList.remove('btn-dark');
+            searchButton.classList.add('btn-light');
+
+            openPackButtons.forEach(button => {
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-light');
+            });
+
+            navbar.classList.remove('bg-dark', 'border-dark');
+            navbar.classList.add('bg-light', 'border-light');
+            navbarNav.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-light');
+                link.classList.add('text-dark');
+            });
+
+            body.classList.add('light-mode');
+            footer.classList.add('light-mode');
+            switchText.style.color = 'black';
+        }
+
+        // Initialize mode based on localStorage
+        if (mode === "dark") {
+            applyDarkMode();
+            toggleSwitch.checked = true; // Set toggle to checked for dark mode
+        } else {
+            applyLightMode();
+            toggleSwitch.checked = false; // Set toggle to unchecked for light mode
+        }
+
+        // Event listener for the switch
+        toggleSwitch.addEventListener('change', function () {
+            // Enable transitions only after the first toggle
+            body.classList.remove('no-transition');
+            footer.classList.remove('no-transition');
+
             if (this.checked) {
-                // Dark Mode
-                switchText.textContent = 'Dark';
-                body.classList.remove('light-mode');
-                footer.classList.remove('light-mode');
-                searchButton.classList.remove('btn-light');
-                searchButton.classList.add('btn-dark');
-
-                openPackButtons.forEach(button => {
-                    button.classList.remove('btn-light');
-                    button.classList.add('btn-dark');
-                });
-
-                // Update Navbar for Dark Mode
-                navbar.classList.remove('bg-light', 'border-light');
-                navbar.classList.add('bg-dark', 'border-dark');
-                navbarNav.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('text-dark');
-                    link.classList.add('text-light');
-                });
-
-                body.classList.add('dark-mode');
-                footer.classList.add('dark-mode');
-                switchText.style.color = 'white';
+                applyDarkMode();
+                localStorage.setItem("mode", "dark");
             } else {
-                // Light Mode
-                switchText.textContent = 'Light';
-                body.classList.remove('dark-mode');
-                footer.classList.remove('dark-mode');
-                searchButton.classList.remove('btn-dark');
-                searchButton.classList.add('btn-light');
-
-                openPackButtons.forEach(button => {
-                    button.classList.remove('btn-dark');
-                    button.classList.add('btn-light');
-                });
-
-                // Update Navbar for Light Mode
-                navbar.classList.remove('bg-dark', 'border-dark');
-                navbar.classList.add('bg-light', 'border-light');
-                navbarNav.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('text-light');
-                    link.classList.add('text-dark');
-                });
-
-                body.classList.add('light-mode');
-                footer.classList.add('light-mode');
-                switchText.style.color = 'black';
+                applyLightMode();
+                localStorage.setItem("mode", "light");
             }
         });
 
+        // Remove the transition class after the initial load
+        window.addEventListener('load', function () {
+            body.classList.remove('no-transition');
+            footer.classList.remove('no-transition');
+        });
     </script>
+
 </body>
 </html>
