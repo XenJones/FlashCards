@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,6 +8,44 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/flashCards.styles.css" asp-append-version="true" />
     <style>
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        #searchResultsDropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            background-color: white;
+            border: 1px solid rgba(0,0,0,.15);
+            border-radius: 0.25rem;
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.25rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: #212529;
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+        }
+
+            .dropdown-item:hover {
+                color: #16181b;
+                text-decoration: none;
+                background-color: #f8f9fa;
+            }
         body.light-mode {
             background-color: white;
             color: black;
@@ -168,10 +206,10 @@
                     </label>
                 </div>
 
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button type="button" class="btn btn-light" id="searchButton">Search</button>
-                </form>
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search for packs..." autocomplete="off">
+                    <div id="searchResultsDropdown" class="dropdown-menu" style="display:none;"></div>
+                </div>
             </div>
         </nav>
     </header>
@@ -195,7 +233,6 @@
         var switchText = document.getElementById('switchText');
         var body = document.body;
         var footer = document.querySelector('footer');
-        var searchButton = document.getElementById('searchButton');
         var openPackButtons = document.querySelectorAll('.open-pack-button');
         var navbar = document.getElementById('navbar');
         var navbarNav = document.getElementById('navbarNav');
@@ -211,8 +248,6 @@
             switchText.textContent = 'Dark';
             body.classList.remove('light-mode');
             footer.classList.remove('light-mode');
-            searchButton.classList.remove('btn-light');
-            searchButton.classList.add('btn-dark');
 
             openPackButtons.forEach(button => {
                 button.classList.remove('btn-light');
@@ -235,8 +270,6 @@
             switchText.textContent = 'Light';
             body.classList.remove('dark-mode');
             footer.classList.remove('dark-mode');
-            searchButton.classList.remove('btn-dark');
-            searchButton.classList.add('btn-light');
 
             openPackButtons.forEach(button => {
                 button.classList.remove('btn-dark');
@@ -283,6 +316,53 @@
         window.addEventListener('load', function () {
             body.classList.remove('no-transition');
             footer.classList.remove('no-transition');
+        });
+
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var query = $(this).val();
+                console.log('Search query:', query);
+
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '/Home/SearchPacks',
+                        type: 'GET',
+                        data: { query: query },
+                        success: function (data) {
+                            console.log('AJAX response:', data);
+
+                            $('#searchResultsDropdown').empty();
+
+                            if (data && data.length > 0) {
+                                data.forEach(function (pack) {
+                                    $('#searchResultsDropdown').append(
+                                        `<a href="/Home/ViewSearchPack/${pack.id}" class="dropdown-item">${pack.name}</a>`
+                                    );
+                                });
+                                $('#searchResultsDropdown').show();
+                            } else {
+                                $('#searchResultsDropdown').append(
+                                    '<span class="dropdown-item">No results found</span>'
+                                );
+                                $('#searchResultsDropdown').show();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Search error:', error);
+                            $('#searchResultsDropdown').hide();
+                        }
+                    });
+                } else {
+                    $('#searchResultsDropdown').hide();
+                }
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.search-container').length) {
+                    $('#searchResultsDropdown').hide();
+                }
+            });
         });
     </script>
 
