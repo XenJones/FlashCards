@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using flashCards.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace flashCards.Controllers;
 
@@ -28,7 +29,8 @@ public class HomeController : Controller
 
     public IActionResult FlashCard()
     {
-        return View();
+        var packs = _context.FlashcardPacks.ToList();
+        return View(packs);
     }
 
     public IActionResult AddFlashCard()
@@ -48,6 +50,43 @@ public class HomeController : Controller
         ViewData["ButtonText"] = "Save Changes";
 
         return View("AddFlashCard", new FlashcardPack());
+    }
+
+    [HttpPost]
+    public IActionResult ViewPack(int id)
+    {
+        var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(p => p.Id == id);
+        
+        if (pack == null)
+        {
+            return NotFound();
+        }
+
+        return View("CardPack", pack);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult deletePack(int id)
+    {
+        var pack = _context.FlashcardPacks.Find(id);
+
+        _context.FlashcardPacks.Remove(pack);
+        _context.SaveChanges();
+
+        return RedirectToAction("FlashCard");
+    }
+
+    [HttpPost]
+    public IActionResult DeleteAllPacks()
+    {
+        var allPacks = _context.FlashcardPacks.ToList();
+
+        _context.FlashcardPacks.RemoveRange(allPacks);
+
+        _context.SaveChanges();
+
+        return RedirectToAction("FlashCard");
     }
 
     [HttpPost]

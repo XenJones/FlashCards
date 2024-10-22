@@ -22,7 +22,7 @@ namespace flashCards.Models
         [Required(ErrorMessage = "Question is required")]
         public string Question { get; set; }
 
-        public string SubQuestion { get; set; }
+        public string? SubQuestion { get; set; }
 
         [Required(ErrorMessage = "Answer is required")]
         public string Answer { get; set; }
