@@ -8,6 +8,7 @@
         <label asp-for="PackName" class="form-label">Pack Name</label>
         <input asp-for="PackName" class="form-control" required />
         <div class="invalid-feedback">Pack name is required</div>
+        <div class="text-danger">@TempData["Error"]</div>
     </div>
 
     <hr />
@@ -121,6 +122,10 @@
                                         <div class="form-group">
                                             <label>Sub Question</label>
                                             <input name="Flashcards[${flashcardIndex}].SubQuestion" class="form-control" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Answer</label>
+                                            <input name="FLashcards[0].Answer" class="form-control" />
                                         </div>
                                         <button type="button" class="btn btn-danger btn-sm" onclick="deleteFlashcard(this)">Delete</button>
                                     </div>
