@@ -1,4 +1,5 @@
-﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+﻿@using System.Security.Claims
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
@@ -31,6 +32,7 @@
                 <div class="card-body" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
                     <div style="text-align: center;" class="form-group mb-3">
                         <h2><b>@pack.PackName</b></h2>
+                        <p>@TempData["UserName"]</p>
                         <form style="display:inline;" method="post" asp-action="deletePack" asp-route-id="@pack.Id" id="deletePackForm@pack.Id">
                             <button title="Permanently Remove Product"
                                     style="margin-top:7.5px; margin-left:7.5px; background-color: red; color: white;"

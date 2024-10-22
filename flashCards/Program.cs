@@ -1,4 +1,5 @@
 using flashCards.Models;
+using flashCards.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -10,6 +11,15 @@ builder.Services.AddControllersWithViews();
 // Configure Entity Framework Core to use SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=flashcards.db"));
+
+builder.Services.AddScoped<UserService>();
+
+builder.Services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", config =>
+{
+    config.Cookie.Name = "UserAuth";
+    config.LoginPath = "/Account/Login";
+});
+
 
 var app = builder.Build();
 
@@ -25,6 +35,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

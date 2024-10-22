@@ -1,6 +1,10 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using flashCards.Models;
+using flashCards.Services;
+using flashCards.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace flashCards.Controllers;
@@ -9,11 +13,13 @@ public class HomeController : Controller
 {
     private readonly AppDbContext _context;
     private readonly ILogger<HomeController> _logger;
+    private readonly UserService _userService;
 
-    public HomeController(AppDbContext context, ILogger<HomeController> logger)
+    public HomeController(AppDbContext context, ILogger<HomeController> logger, UserService userService)
     {
         _context = context;
         _logger = logger;
+        _userService = userService;
     }
 
     public IActionResult Index()
@@ -31,29 +37,57 @@ public class HomeController : Controller
         var packs = _context.FlashcardPacks.ToList();
         return View(packs);
     }
-
+    
+    [Authorize]
     public IActionResult AddFlashCard()
     {
         ViewData["Title"] = "Add Flashcard";
         ViewData["Action"] = "AddPack";
         ViewData["ButtonText"] = "Create Pack";
+        
+        string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+        Console.WriteLine(userEmail);
+
+        if (userEmail == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+        
+        var user = _userService.GetUserByEmail(userEmail);
+        
+        TempData["User"] = user.Id;
 
         return View("AddFlashCard", new FlashcardPack());
     }
 
+    [Authorize]
     public IActionResult EditFlashCard()
     {
         ViewData["Title"] = "Edit Flash Card";
         ViewData["Action"] = "EditPack";
         ViewData["ButtonText"] = "Save Changes";
+        
+        string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+        Console.WriteLine(userEmail);
+
+        if (userEmail == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+        
+        var user = _userService.GetUserByEmail(userEmail);
+        
+        TempData["EditedUser"] = user.Id;
 
         return View("AddFlashCard", new FlashcardPack());
     }
 
     [HttpPost]
-    public IActionResult ViewPack(int id)
+    [Authorize]
+    public IActionResult ViewPack(Guid id)
     {
-        var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(p => p.Id == id);
+        var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(
+            p => p.Id == id);
         
         if (pack == null)
         {
@@ -65,6 +99,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public IActionResult deletePack(int id)
     {
         var pack = _context.FlashcardPacks.Find(id);
@@ -87,6 +122,7 @@ public class HomeController : Controller
         return RedirectToAction("FlashCard");
     }
 
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddPack(FlashcardPack flashcardPack)

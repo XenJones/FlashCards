@@ -48,6 +48,7 @@ public class AccountController : Controller
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
         
         var identity = new ClaimsIdentity(claims, "CookieAuth");

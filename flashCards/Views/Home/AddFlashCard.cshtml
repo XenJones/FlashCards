@@ -1,17 +1,20 @@
 ﻿@model FlashcardPack
 <h2>@ViewData["Title"]</h2>
 <form asp-action="@ViewData["Action"]" method="post">
-    <input type="hidden" asp-for="Id" />
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="UserId" value="@TempData["User"]"/>
+    <input type="hidden" asp-for="EditedBy" value="@TempData["EditedUser"]"/>
 
     <!-- Pack Name Section -->
     <div class="form-group mb-3">
         <label asp-for="PackName" class="form-label">Pack Name</label>
-        <input asp-for="PackName" class="form-control" required />
+        <input asp-for="PackName" class="form-control" required/>
         <div class="invalid-feedback">Pack name is required</div>
         <div class="text-danger">@TempData["Error"]</div>
     </div>
 
-    <hr />
+    <hr/>
 
     <h3>Flash Cards</h3>
     <div class="container">
@@ -22,22 +25,22 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label>Image URL</label>
-                            <input name="Flashcards[0].ImageURL" class="form-control" required onchange="updateImage(0)" />
+                            <input name="Flashcards[0].ImageURL" class="form-control" required onchange="updateImage(0)"/>
                             <div class="invalid-feedback">Image URL is required</div>
                         </div>
-                        <hr />
+                        <hr/>
                         <div class="form-group mb-3">
                             <label>Question</label>
-                            <input name="Flashcards[0].Question" class="form-control" required />
+                            <input name="Flashcards[0].Question" class="form-control" required/>
                             <div class="invalid-feedback">Question is required</div>
                         </div>
                         <div class="form-group">
                             <label>Sub Question</label>
-                            <input name="Flashcards[0].SubQuestion" class="form-control" />
+                            <input name="Flashcards[0].SubQuestion" class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label>Answer</label>  
-                            <input name="FLashcards[0].Answer" class="form-control" />
+                            <label>Answer</label>
+                            <input name="Flashcards[0].Answer" class="form-control"/>
                         </div>
                         <button style="margin-top: 20px;" type="button" class="btn btn-danger btn-sm" onclick="deleteFlashcard(this)">Delete</button>
                     </div>
@@ -48,11 +51,11 @@
 
     <div class="mb-3">
         <label for="flashcard-count" class="form-label">Number of Flashcards to Add</label>
-        <input type="number" id="flashcard-count" class="form-control" value="1" min="1" max="500" />
+        <input type="number" id="flashcard-count" class="form-control" value="1" min="1" max="500"/>
     </div>
 
     <button type="button" class="btn btn-secondary" id="add-flashcard-btn">Add Flashcard</button>
-    <hr />
+    <hr/>
     <button type="submit" class="btn btn-primary">@ViewData["ButtonText"]</button>
 </form>
 
