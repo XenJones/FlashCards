@@ -1,4 +1,7 @@
 ﻿@model FlashcardPack
+@{
+    var existingFlashcards = Model?.Flashcards?.ToList() ?? new List<Flashcard>();
+}
 <h2>@ViewData["Title"]</h2>
 <form asp-action="@ViewData["Action"]" method="post">
     <input type="hidden" asp-for="Id" />
@@ -16,33 +19,46 @@
     <h3>Flash Cards</h3>
     <div class="container">
         <div class="row" id="flashcards-container">
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img style="max-height: 200px; object-fit:contain;" class="card-img-top" id="flashcardImg0" src="..." alt="Flashcard Image for Question 1">
-                    <div class="card-body">
-                        <div class="form-group mb-3">
-                            <label>Image URL</label>
-                            <input name="Flashcards[0].ImageURL" class="form-control" required onchange="updateImage(0)" />
-                            <div class="invalid-feedback">Image URL is required</div>
+            @for (var i = 0; i < Math.Max(1, existingFlashcards.Count); i++)
+            {
+                var flashcard = i < existingFlashcards.Count ? existingFlashcards[i] : new Flashcard();
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <img style="max-height: 200px; object-fit:contain;" class="card-img-top"
+                             id="flashcardImg@(i)" src="@flashcard.ImageURL" alt="Flashcard Image for Question @(i + 1)">
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label>Image URL</label>
+                                <input name="Flashcards[@i].ImageURL" class="form-control" required
+                                       onchange="updateImage(@i)" value="@flashcard.ImageURL" />
+                                <div class="invalid-feedback">Image URL is required</div>
+                            </div>
+                            <hr />
+                            <div class="form-group mb-3">
+                                <label>Question</label>
+                                <input name="Flashcards[@i].Question" class="form-control" required
+                                       value="@flashcard.Question" />
+                                <div class="invalid-feedback">Question is required</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Sub Question</label>
+                                <input name="Flashcards[@i].SubQuestion" class="form-control"
+                                       value="@flashcard.SubQuestion" />
+                            </div>
+                            <div class="form-group">
+                                <label>Answer</label>
+                                <input name="Flashcards[@i].Answer" class="form-control"
+                                       value="@flashcard.Answer" />
+                            </div>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="deleteFlashcard(this)">
+                                Delete
+                            </button>
                         </div>
-                        <hr />
-                        <div class="form-group mb-3">
-                            <label>Question</label>
-                            <input name="Flashcards[0].Question" class="form-control" required />
-                            <div class="invalid-feedback">Question is required</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Sub Question</label>
-                            <input name="Flashcards[0].SubQuestion" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <label>Answer</label>  
-                            <input name="FLashcards[0].Answer" class="form-control" />
-                        </div>
-                        <button style="margin-top: 20px;" type="button" class="btn btn-danger btn-sm" onclick="deleteFlashcard(this)">Delete</button>
                     </div>
                 </div>
-            </div>
+            }
+        </div>
         </div>
     </div>
 

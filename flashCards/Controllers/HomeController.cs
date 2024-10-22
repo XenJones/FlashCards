@@ -41,14 +41,68 @@ public class HomeController : Controller
         return View("AddFlashCard", new FlashcardPack());
     }
 
-    public IActionResult EditFlashCard()
+    public IActionResult EditFlashCard(int id)
     {
+        var pack = _context.FlashcardPacks
+            .Include(p => p.Flashcards)
+            .FirstOrDefault(p => p.Id == id);
+
+        if (pack == null)
+        {
+            return NotFound();
+        }
+
         ViewData["Title"] = "Edit Flash Card";
         ViewData["Action"] = "EditPack";
         ViewData["ButtonText"] = "Save Changes";
 
-        return View("AddFlashCard", new FlashcardPack());
+        return View("AddFlashCard", pack);
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditPack(FlashcardPack flashcardPack)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var existingPack = await _context.FlashcardPacks
+                    .Include(p => p.Flashcards)
+                    .FirstOrDefaultAsync(p => p.Id == flashcardPack.Id);
+
+                if (existingPack == null)
+                {
+                    return NotFound();
+                }
+
+                // Update pack properties
+                existingPack.PackName = flashcardPack.PackName;
+
+                // Remove existing flashcards
+                _context.Flashcards.RemoveRange(existingPack.Flashcards);
+
+                // Add new flashcards
+                existingPack.Flashcards = flashcardPack.Flashcards
+                    .Where(f => !string.IsNullOrWhiteSpace(f.Question) || !string.IsNullOrWhiteSpace(f.Answer))
+                    .ToList();
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction("FlashCard");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating FlashcardPack");
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, contact your system administrator.");
+            }
+        }
+
+        ViewData["Title"] = "Edit Flash Card";
+        ViewData["Action"] = "EditPack";
+        ViewData["ButtonText"] = "Save Changes";
+        return View("AddFlashCard", flashcardPack);
+    }
+
 
     [HttpPost]
     public IActionResult ViewPack(int id)
@@ -95,7 +149,7 @@ public class HomeController : Controller
         {
             try
             {
-                _logger.LogInformation($"Attempting to add FlashcardPack: {flashcardPack.PackName}");
+                _logger.LogInformation($"Attempting to save FlashcardPack: {flashcardPack.PackName}");
 
                 // Ensure the Flashcards collection is initialized
                 if (flashcardPack.Flashcards == null)
@@ -108,18 +162,19 @@ public class HomeController : Controller
                     .Where(f => !string.IsNullOrWhiteSpace(f.Question) || !string.IsNullOrWhiteSpace(f.Answer))
                     .ToList();
 
-                // Add the FlashcardPack to the context
-                _context.FlashcardPacks.Add(flashcardPack);
+                if (flashcardPack.Id == 0) // New pack
+                {
+                    _context.FlashcardPacks.Add(flashcardPack);
+                }
+                else // Update existing pack
+                {
+                    _context.FlashcardPacks.Update(flashcardPack);
+                }
 
                 _logger.LogInformation($"Saving FlashcardPack to database...");
-                // Save changes to get the FlashcardPack Id
                 var saveResult = await _context.SaveChangesAsync();
                 _logger.LogInformation($"SaveChanges result: {saveResult}");
 
-                // Log the number of flashcards
-                _logger.LogInformation($"Number of flashcards: {flashcardPack.Flashcards.Count}");
-
-                // Redirect to the FlashCard view or another view after successful saving
                 return RedirectToAction("FlashCard");
             }
             catch (Exception ex)
@@ -129,6 +184,7 @@ public class HomeController : Controller
             }
         }
 
+        // Log validation errors if any
         if (!ModelState.IsValid)
         {
             foreach (var modelState in ModelState.Values)
@@ -141,11 +197,13 @@ public class HomeController : Controller
         }
 
         // Return the AddFlashCard view if there are validation issues or any errors
-        ViewData["Title"] = "Add Flashcard";
-        ViewData["Action"] = "AddPack";
-        ViewData["ButtonText"] = "Create Pack";
+        ViewData["Title"] = flashcardPack.Id == 0 ? "Add Flashcard" : "Edit Flashcard";
+        ViewData["Action"] = flashcardPack.Id == 0 ? "AddPack" : "EditPack";
+        ViewData["ButtonText"] = flashcardPack.Id == 0 ? "Create Pack" : "Save Changes";
+
         return View("AddFlashCard", flashcardPack);
     }
+
 
     [HttpGet]
     public IActionResult ViewSearchPack(int id)
