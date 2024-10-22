@@ -32,6 +32,20 @@ public class HomeController : Controller
         return View(packs);
     }
 
+    public IActionResult Slideshow(int id)
+    {
+        var pack = _context.FlashcardPacks
+            .Include(p => p.Flashcards)
+            .FirstOrDefault(p => p.Id == id);
+    
+        if (pack == null)
+        {
+            return NotFound();
+        }
+    
+        return View(pack);
+    }
+
     public IActionResult AddFlashCard()
     {
         ViewData["Title"] = "Add Flashcard";
