@@ -6,6 +6,7 @@ namespace flashCards.Controllers;
 
 public class HomeController : Controller
 {
+    
     private readonly AppDbContext _context;
     private readonly ILogger<HomeController> _logger;
 
@@ -36,6 +37,7 @@ public class HomeController : Controller
         ViewData["Action"] = "AddPack";
         ViewData["ButtonText"] = "Create Pack";
 
+        
         return View("AddFlashCard", new FlashcardPack());
     }
 
@@ -56,32 +58,60 @@ public class HomeController : Controller
         {
             try
             {
-                _logger.LogInformation($"Attempting to add FlashcardPack: {flashcardPack.PackName}");
+                bool canAdd = true;
 
-                // Ensure the Flashcards collection is initialized
-                if (flashcardPack.Flashcards == null)
+                //Loops through all the packs in database
+                foreach(var pack in _context.FlashcardPacks) 
                 {
-                    flashcardPack.Flashcards = new List<Flashcard>();
+                    //Compares the other names in database to the newly added pack
+                    if (pack.PackName.ToString() == flashcardPack.PackName.ToString())
+                    {
+                        //if its the same name switch variable which ensures pack isnt saved
+                        canAdd = false;
+                    }
                 }
 
-                // Remove any empty flashcards
-                flashcardPack.Flashcards = flashcardPack.Flashcards
-                    .Where(f => !string.IsNullOrWhiteSpace(f.Question) || !string.IsNullOrWhiteSpace(f.Answer))
-                    .ToList();
+                //If the pack name is unique it will save
+                if (canAdd == true)
+                {
 
-                // Add the FlashcardPack to the context
-                _context.FlashcardPacks.Add(flashcardPack);
+                    _logger.LogInformation($"Attempting to add FlashcardPack: {flashcardPack.PackName}");
 
-                _logger.LogInformation($"Saving FlashcardPack to database...");
-                // Save changes to get the FlashcardPack Id
-                var saveResult = await _context.SaveChangesAsync();
-                _logger.LogInformation($"SaveChanges result: {saveResult}");
+                    // Ensure the Flashcards collection is initialized
+                    if (flashcardPack.Flashcards == null)
+                    {
+                        flashcardPack.Flashcards = new List<Flashcard>();
+                    }
 
-                // Log the number of flashcards
-                _logger.LogInformation($"Number of flashcards: {flashcardPack.Flashcards.Count}");
+                    // Remove any empty flashcards
+                    flashcardPack.Flashcards = flashcardPack.Flashcards
+                        .Where(f => !string.IsNullOrWhiteSpace(f.Question) || !string.IsNullOrWhiteSpace(f.Answer))
+                        .ToList();
 
-                // Redirect to the FlashCard view or another view after successful saving
-                return RedirectToAction("FlashCard");
+
+                    // Add the FlashcardPack to the context
+                    _context.FlashcardPacks.Add(flashcardPack);
+
+                    _logger.LogInformation($"Saving FlashcardPack to database...");
+                    // Save changes to get the FlashcardPack Id
+                    var saveResult = await _context.SaveChangesAsync();
+                    _logger.LogInformation($"SaveChanges result: {saveResult}");
+
+                    // Log the number of flashcards
+                    _logger.LogInformation($"Number of flashcards: {flashcardPack.Flashcards.Count}");
+
+                    // Redirect to the FlashCard view or another view after successful saving
+                    return RedirectToAction("FlashCard");
+                }
+                else
+                {
+                    Console.WriteLine("This Name Exists");
+                }
+                
+
+
+                
+
             }
             catch (Exception ex)
             {
