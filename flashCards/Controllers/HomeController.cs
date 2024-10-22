@@ -80,7 +80,6 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    [Authorize]
     public IActionResult ViewPack(Guid id)
     {
         var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(
@@ -116,6 +115,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult DeleteAllPacks()
     {
         string userId = User.FindFirst(ClaimTypes.Name)?.Value;
