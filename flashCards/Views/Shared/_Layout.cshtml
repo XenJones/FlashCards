@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -46,6 +47,7 @@
                 text-decoration: none;
                 background-color: #f8f9fa;
             }
+
         body.light-mode {
             background-color: white;
             color: black;
@@ -86,7 +88,7 @@
             background-color: #555;
             color: white;
             border: 1px solid #777;
-        }   
+        }
 
         body.light-mode .card {
             background-color: white;
@@ -112,11 +114,11 @@
             border-radius: 15px;
         }
 
-        .custom-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+            .custom-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
 
         .slider {
             position: absolute;
@@ -130,25 +132,25 @@
             border-radius: 34px;
         }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 24px;
+                width: 24px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
 
         input:checked + .slider {
             background-color: #2196F3;
         }
 
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
+            input:checked + .slider:before {
+                transform: translateX(30px);
+            }
 
         .switch-text {
             position: absolute;
@@ -167,7 +169,7 @@
         }
 
         body.dark-mode .navbar-brand {
-            color: white; 
+            color: white;
         }
     </style>
 </head>
