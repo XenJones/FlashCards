@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -6,7 +6,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <div class="navbar-nav me-auto mb-2 mb-lg-0">
                 <a class="btn btn-outline-primary me-2" href="@Url.Action("AddFlashCard", "Home")">Create Flash Cards</a>
-                <a class="btn btn-outline-danger me-2" href="#" onclick="confirmDelete('Are you sure you want to delete all packs? This action cannot be undone!')">Delete All Packs</a>
+                <a class="btn btn-outline-danger me-2" href="#" onclick="confirmDelete('Are you sure you want to delete all packs? This action cannot be undone!', 'delete-all-packs-form')">Delete All Packs</a>
             </div>
             <form id="delete-all-packs-form" method="post" asp-action="DeleteAllPacks" style="display:none;">
                 @Html.AntiForgeryToken()
@@ -17,9 +17,6 @@
 
 <div style="display: flex; flex-direction: row; flex-wrap: wrap;" class="row">
     @foreach (var pack in Model)
-
-
-
     {
         <div class="col-sm-6 col-md-4 mb-4 d-flex">
             <div class="card shadow-sm" style="width: 100%; position: relative; height: 200px;">
@@ -27,7 +24,7 @@
                     <div style="text-align: center;" class="form-group mb-3">
                         <h2><b>@pack.PackName</b></h2>
                         <form style="display:inline;" method="post" asp-action="deletePack" asp-route-id="@pack.Id" id="deletePackForm@pack.Id">
-                            <button title="Permanently Remove Product"
+                            <button title="Permanently Remove Card"
                                     style="margin-top:7.5px; margin-left:7.5px; background-color: red; color: white;"
                                     class="btn btn-sm"
                                     onclick="confirmDelete('Are you sure you want to delete the pack \'@pack.PackName\'? This action cannot be undone!', 'deletePackForm@(pack.Id)'); return false;">
