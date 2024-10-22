@@ -232,6 +232,26 @@ public class HomeController : Controller
         return View("CardPack", pack);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteCard(int id) // id is the flashcard ID
+    {
+        // Locate the flashcard by ID
+        var flashcard = _context.Flashcards.FirstOrDefault(c => c.Id == id);
+
+        if (flashcard == null)
+        {
+            // Handle the case where the flashcard doesn't exist
+            return NotFound();
+        }
+
+        _context.Flashcards.Remove(flashcard);
+        _context.SaveChanges();
+
+        // Redirect to the pack or the previous page (adjust as needed)
+        return RedirectToAction("Index");
+    }
+
     [HttpGet]
     public IActionResult SearchPacks(string query)
     {
