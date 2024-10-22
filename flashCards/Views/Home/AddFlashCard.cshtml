@@ -1,4 +1,4 @@
-﻿@model FlashcardPack
+@model FlashcardPack
 @{
     var existingFlashcards = Model?.Flashcards?.ToList() ?? new List<Flashcard>();
 }
@@ -24,18 +24,19 @@
                 var flashcard = i < existingFlashcards.Count ? existingFlashcards[i] : new Flashcard();
                 <div class="col-md-4 mb-4">
                     <div class="card shadow-sm">
+                        <p><small>*Required</small></p>
                         <img style="max-height: 200px; object-fit:contain;" class="card-img-top"
                              id="flashcardImg@(i)" src="@flashcard.ImageURL" alt="Flashcard Image for Question @(i + 1)">
                         <div class="card-body">
                             <div class="form-group mb-3">
-                                <label>Image URL</label>
+                                <label>Image URL*</label>
                                 <input name="Flashcards[@i].ImageURL" class="form-control" required
                                        onchange="updateImage(@i)" value="@flashcard.ImageURL" />
                                 <div class="invalid-feedback">Image URL is required</div>
                             </div>
                             <hr />
                             <div class="form-group mb-3">
-                                <label>Question</label>
+                                <label>Question*</label>
                                 <input name="Flashcards[@i].Question" class="form-control" required
                                        value="@flashcard.Question" />
                                 <div class="invalid-feedback">Question is required</div>
@@ -46,7 +47,7 @@
                                        value="@flashcard.SubQuestion" />
                             </div>
                             <div class="form-group">
-                                <label>Answer</label>
+                                <label>Answer*</label>
                                 <input name="Flashcards[@i].Answer" class="form-control"
                                        value="@flashcard.Answer" />
                             </div>
@@ -124,7 +125,7 @@
                                          alt="Flashcard Image for Question ${flashcardIndex + 1}">
                                     <div class="card-body">
                                         <div class="form-group mb-3">
-                                            <label>Image URL</label>
+                                                    <label>Image URL*</label>
                                             <input name="Flashcards[${flashcardIndex}].ImageURL"
                                                    class="form-control"
                                                    required
@@ -133,7 +134,7 @@
                                         </div>
                                         <hr />
                                         <div class="form-group mb-3">
-                                            <label>Question</label>
+                                                    <label>Question*</label>
                                             <input name="Flashcards[${flashcardIndex}].Question"
                                                    class="form-control"
                                                    required />
@@ -145,7 +146,7 @@
                                                    class="form-control" />
                                         </div>
                                         <div class="form-group">
-                                            <label>Answer</label>
+                                                    <label>Answer*</label>
                                             <input name="Flashcards[${flashcardIndex}].Answer"
                                                    class="form-control" />
                                         </div>
