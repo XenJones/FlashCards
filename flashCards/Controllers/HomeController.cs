@@ -147,6 +147,36 @@ public class HomeController : Controller
         return View("AddFlashCard", flashcardPack);
     }
 
+    [HttpGet]
+    public IActionResult ViewSearchPack(int id)
+    {
+        var pack = _context.FlashcardPacks
+            .Include(p => p.Flashcards)
+            .FirstOrDefault(p => p.Id == id);
+
+        if (pack == null)
+        {
+            return NotFound();
+        }
+
+        return View(pack);
+    }
+
+    [HttpGet]
+    public IActionResult SearchPacks(string query)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            return Json(new List<object>());
+        }
+
+        var packs = _context.FlashcardPacks
+            .Where(p => p.PackName.Contains(query))
+            .Select(p => new { id = p.Id, name = p.PackName })
+            .ToList();
+
+        return Json(packs);
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
