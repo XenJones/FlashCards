@@ -11,10 +11,12 @@ public class AccountController : Controller
 
 {
     private readonly UserService _userService;
+    private readonly AppDbContext _context;
 
-    public AccountController(UserService userService)
+    public AccountController(UserService userService, AppDbContext context)
     {
         _userService = userService;
+        _context = context;
     }
     
     [HttpGet]
@@ -71,6 +73,7 @@ public class AccountController : Controller
     {
             string email = User.FindFirst(ClaimTypes.Email)?.Value;
             var user = _userService.GetUserByEmail(email);
+            
             return View(user);
     }
 
@@ -96,6 +99,14 @@ public class AccountController : Controller
         _userService.DeleteUser(userEmail);
         
         return RedirectToAction("Logout");
+    }
+
+    public IActionResult ConfirmDelete()
+    {
+        string email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var user = _userService.GetUserByEmail(email);        
+        
+        return View(user);
     }
     
 }

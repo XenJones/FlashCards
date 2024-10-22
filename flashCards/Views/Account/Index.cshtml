@@ -1,5 +1,4 @@
 @model User
-
 <form asp-action="Edit" method="post">
     <div class="form-group">
         <label asp-for="UserName">Username</label>
@@ -21,8 +20,8 @@
         <label asp-for="Phone">Phone</label>
         <input class="form-control" type="text" id="Phone" asp-for="Phone"/>
     </div>
-    <button type="submit">Save Changes</button>
+    <button type="submit" class="btn btn-primary m-1">Save Changes</button>
 </form>
-<form asp-action="Delete" method="post">
-    <button type="submit" class="btn btn-danger">Delete Account</button>
+<form asp-action="ConfirmDelete" method="post">
+    <button type="submit" class="btn btn-danger m-1">Delete account</button>
 </form>

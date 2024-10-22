@@ -68,13 +68,10 @@ public class HomeController : Controller
         ViewData["ButtonText"] = "Save Changes";
         
         string userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(userEmail);
-
         if (userEmail == null)
         {
             return RedirectToAction("Login", "Account");
         }
-        
         var user = _userService.GetUserByEmail(userEmail);
         
         TempData["EditedUser"] = user.Id;
@@ -102,6 +99,8 @@ public class HomeController : Controller
     [Authorize]
     public IActionResult deletePack(int id)
     {
+        
+        
         var pack = _context.FlashcardPacks.Find(id);
 
         _context.FlashcardPacks.Remove(pack);
@@ -113,9 +112,18 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult DeleteAllPacks()
     {
+        string userId = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (userId == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+        var user = _userService.GetUserById(userId);
+        
         var allPacks = _context.FlashcardPacks.ToList();
 
-        _context.FlashcardPacks.RemoveRange(allPacks);
+        var userPacks = allPacks.FindAll(p => p.Id.ToString() == userId);
+        
+        _context.FlashcardPacks.RemoveRange(userPacks);
 
         _context.SaveChanges();
 

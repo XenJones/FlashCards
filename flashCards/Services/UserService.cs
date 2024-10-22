@@ -65,6 +65,11 @@ public class UserService
         return _context.User.SingleOrDefault(u => u.Email == email);
     }
 
+    public User GetUserById(string id)
+    {
+        return _context.User.SingleOrDefault(u => u.Id.ToString() == id);
+    }
+
     public void UpdateUser(User user)
     {
         var existingUser = _context.User.SingleOrDefault(u => u.Email == user.Email);
