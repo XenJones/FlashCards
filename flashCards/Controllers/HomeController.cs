@@ -150,16 +150,14 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult ViewSearchPack(int id)
     {
-        var pack = _context.FlashcardPacks
-            .Include(p => p.Flashcards)
-            .FirstOrDefault(p => p.Id == id);
+        var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(p => p.Id == id);
 
         if (pack == null)
         {
             return NotFound();
         }
 
-        return View(pack);
+        return View("CardPack", pack);
     }
 
     [HttpGet]
