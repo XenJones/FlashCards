@@ -54,7 +54,7 @@ public class HomeController : Controller
     public IActionResult ViewPack(int id)
     {
         var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(p => p.Id == id);
-        
+
         if (pack == null)
         {
             return NotFound();
@@ -153,5 +153,5 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-    
+
 }

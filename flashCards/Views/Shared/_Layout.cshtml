@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,10 +7,135 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/flashCards.styles.css" asp-append-version="true" />
+    <style>
+        body.light-mode {
+            background-color: white;
+            color: black;
+        }
+
+        body.dark-mode {
+            background-color: #343a40;
+            color: white;
+        }
+
+        footer.light-mode {
+            background-color: white;
+            color: black !important;
+        }
+
+        footer.dark-mode {
+            background-color: #343a40;
+            color: white !important;
+        }
+
+        input,
+        select,
+        textarea {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.light-mode input,
+        body.light-mode select,
+        body.light-mode textarea {
+            background-color: white;
+            color: black;
+            border: 1px solid #ced4da;
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background-color: #555;
+            color: white;
+            border: 1px solid #777;
+        }   
+
+        body.light-mode .card {
+            background-color: white;
+            color: black;
+            border: 1px solid #ced4da;
+        }
+
+        body.dark-mode .card {
+            background-color: #454d55;
+            color: white;
+            border: 1px solid #777;
+        }
+
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-right: 10px;
+            padding: 0;
+            text-align: center;
+            border: 1px solid rgba(180, 180, 180, 0.5);
+            border-radius: 15px;
+        }
+
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .switch-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            transition: .4s;
+            user-select: none;
+        }
+
+        body.light-mode .navbar-brand {
+            color: black;
+        }
+
+        body.dark-mode .navbar-brand {
+            color: white; 
+        }
+    </style>
 </head>
-<body>
+<body class="light-mode">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" id="navbar">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cardonnay</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -18,12 +143,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1" id="navbarNav">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Flash Cards
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -32,19 +157,20 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>
                 <div class="form-check form-switch custom-switch">
                     <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
                     <label class="form-check-label" for="flexSwitchCheckDefault">
-                        <span class="switch-text">OFF</span>
+                        <span class="switch-text" style="color: black" id="switchText">Light</span>
                     </label>
                 </div>
+
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button type="button" class="btn btn-outline-secondary">Search</button>
+                    <button type="button" class="btn btn-light" id="searchButton">Search</button>
                 </form>
             </div>
         </nav>
@@ -55,7 +181,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="light-mode border-top footer text-muted">
         <div class="container">
             &copy; 2024 - flashCards - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
@@ -64,7 +190,101 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        var switchText = document.getElementById('switchText');
+        var body = document.body;
+        var footer = document.querySelector('footer');
+        var searchButton = document.getElementById('searchButton');
+        var openPackButtons = document.querySelectorAll('.open-pack-button');
+        var navbar = document.getElementById('navbar');
+        var navbarNav = document.getElementById('navbarNav');
+        var toggleSwitch = document.getElementById('flexSwitchCheckDefault');
+
+        var mode = localStorage.getItem("mode");
+
+        // Initially disable transitions
+        body.classList.add('no-transition');
+        footer.classList.add('no-transition');
+
+        function applyDarkMode() {
+            switchText.textContent = 'Dark';
+            body.classList.remove('light-mode');
+            footer.classList.remove('light-mode');
+            searchButton.classList.remove('btn-light');
+            searchButton.classList.add('btn-dark');
+
+            openPackButtons.forEach(button => {
+                button.classList.remove('btn-light');
+                button.classList.add('btn-dark');
+            });
+
+            navbar.classList.remove('bg-light', 'border-light');
+            navbar.classList.add('bg-dark', 'border-dark');
+            navbarNav.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-dark');
+                link.classList.add('text-light');
+            });
+
+            body.classList.add('dark-mode');
+            footer.classList.add('dark-mode');
+            switchText.style.color = 'white';
+        }
+
+        function applyLightMode() {
+            switchText.textContent = 'Light';
+            body.classList.remove('dark-mode');
+            footer.classList.remove('dark-mode');
+            searchButton.classList.remove('btn-dark');
+            searchButton.classList.add('btn-light');
+
+            openPackButtons.forEach(button => {
+                button.classList.remove('btn-dark');
+                button.classList.add('btn-light');
+            });
+
+            navbar.classList.remove('bg-dark', 'border-dark');
+            navbar.classList.add('bg-light', 'border-light');
+            navbarNav.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-light');
+                link.classList.add('text-dark');
+            });
+
+            body.classList.add('light-mode');
+            footer.classList.add('light-mode');
+            switchText.style.color = 'black';
+        }
+
+        // Initialize mode based on localStorage
+        if (mode === "dark") {
+            applyDarkMode();
+            toggleSwitch.checked = true; // Set toggle to checked for dark mode
+        } else {
+            applyLightMode();
+            toggleSwitch.checked = false; // Set toggle to unchecked for light mode
+        }
+
+        // Event listener for the switch
+        toggleSwitch.addEventListener('change', function () {
+            // Enable transitions only after the first toggle
+            body.classList.remove('no-transition');
+            footer.classList.remove('no-transition');
+
+            if (this.checked) {
+                applyDarkMode();
+                localStorage.setItem("mode", "dark");
+            } else {
+                applyLightMode();
+                localStorage.setItem("mode", "light");
+            }
+        });
+
+        // Remove the transition class after the initial load
+        window.addEventListener('load', function () {
+            body.classList.remove('no-transition');
+            footer.classList.remove('no-transition');
+        });
+    </script>
+
 </body>
 </html>
-
-<style></style>
