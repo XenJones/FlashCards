@@ -13,6 +13,7 @@
 
 <div class="container">
     <h1>@Model.PackName</h1>
+    <p><strong>Author: </strong>@TempData["UserName"]</p>
     <div class="row">
         @foreach (var card in Model.Flashcards)
 

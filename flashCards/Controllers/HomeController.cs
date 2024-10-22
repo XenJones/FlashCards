@@ -85,6 +85,12 @@ public class HomeController : Controller
     {
         var pack = _context.FlashcardPacks.Include(p => p.Flashcards).FirstOrDefault(
             p => p.Id == id);
+
+        var userId = pack.UserId;
+        
+        var user = _context.User.SingleOrDefault(u => u.Id == userId);
+        
+        TempData["UserName"] = user.UserName;
         
         if (pack == null)
         {
