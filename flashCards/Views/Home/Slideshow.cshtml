@@ -1,0 +1,221 @@
+@model FlashcardPack
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="navbar-nav me-auto mb-2 mb-lg-0">
+                <a class="btn btn-outline-secondary me-2" href="javascript:history.back();">Back</a>
+            </div>
+            <div class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <button class="btn btn-outline-primary me-2" id="autoPlayBtn">Auto Play</button>
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary" id="prevBtn">Previous</button>
+                    <button class="btn btn-outline-primary" id="nextBtn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="text-center mb-4">@Model.PackName</h1>
+    <div class="slideshow-container">
+        @foreach (var card in Model.Flashcards)
+        {
+            <div class="slide" style="display: none;">
+                <div class="card-container">
+                    <div class="card shadow-sm" style="border-radius: 10px; background-image: url('@card.ImageURL');">
+                        <div class="card-front" style="border-radius: 10px;">
+                            <div class="card-body">
+                                <h5 class="card-title">@card.Question</h5>
+                                <p class="card-text">@card.SubQuestion</p>
+                            </div>
+                        </div>
+                        <div class="card-back" style="border-radius: 10px; display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title">Answer:</h5>
+                                <p class="card-text">@card.Answer</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-buttons">
+                        <button class="btn btn-secondary flip-btn">Flip</button>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="progress mt-4">
+            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+        </div>
+        <div class="text-center mt-2">
+            <span id="slideCounter">Card 1 of @Model.Flashcards.Count()</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .slideshow-container {
+        max-width: 800px;
+        margin: auto;
+        position: relative;
+    }
+
+    .slide {
+        width: 100%;
+        height: 400px;
+        margin: auto;
+    }
+
+    .card-container {
+        perspective: 1000px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .card.flipped {
+        transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-front {
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .card-back {
+        transform: rotateY(180deg);
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    }
+
+    .card-body {
+        text-align: center;
+        padding: 20px;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    }
+
+    .card-buttons {
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .progress {
+        height: 5px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.querySelector('.progress-bar');
+        const slideCounter = document.getElementById('slideCounter');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+        const autoPlayDelay = 5000; // 5 seconds
+
+        // Show the first slide
+        if (slides.length > 0) {
+            slides[0].style.display = 'block';
+        }
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+            slideCounter.textContent = `Card ${currentSlide + 1} of ${slides.length}`;
+        }
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.style.display = 'none');
+            slides[index].style.display = 'block';
+            updateProgress();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // Event listeners for buttons
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', previousSlide);
+        
+        // Auto play functionality
+        document.getElementById('autoPlayBtn').addEventListener('click', function() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                this.textContent = 'Auto Play';
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-outline-primary');
+            } else {
+                autoPlayInterval = setInterval(nextSlide, autoPlayDelay);
+                this.textContent = 'Stop';
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-danger');
+            }
+        });
+
+        // Flip card functionality
+        document.querySelectorAll('.flip-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const card = this.closest('.card-container').querySelector('.card');
+                const front = card.querySelector('.card-front');
+                const back = card.querySelector('.card-back');
+
+                if (card.classList.contains('flipped')) {
+                    back.style.display = 'none';
+                    front.style.display = 'flex';
+                } else {
+                    front.style.display = 'none';
+                    back.style.display = 'flex';
+                }
+                card.classList.toggle('flipped');
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === ' ') {
+                const currentFlipBtn = slides[currentSlide].querySelector('.flip-btn');
+                currentFlipBtn.click();
+                e.preventDefault();
+            }
+        });
+    });
+</script>
