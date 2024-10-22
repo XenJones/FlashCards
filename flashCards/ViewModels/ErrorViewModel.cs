@@ -1,4 +1,4 @@
-namespace flashCards.Models;
+namespace flashCards.ViewModels;
 
 public class ErrorViewModel
 {
